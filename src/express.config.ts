@@ -1,4 +1,4 @@
-import playwrightRouter from './routes/index';
+import playwrightRouter from './routes/index.js';
 import compression from 'compression';
 import 'dotenv/config';
 import express, { type Application } from 'express';
