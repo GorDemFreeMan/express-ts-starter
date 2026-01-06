@@ -5,7 +5,7 @@ const router = Router();
 const activeBrowsers = new Map<string, any>();
 
 // Health check
-router.get('/health', (req, res) => {
+router.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
     service: 'playwright-api',
@@ -34,13 +34,13 @@ router.post('/browser/launch', async (req, res) => {
       createdAt: new Date()
     });
 
-    res.json({
+    return res.json({
       success: true,
       message: 'Browser launched',
       sessionId
     });
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 });
 
@@ -62,13 +62,13 @@ router.post('/browser/navigate', async (req, res) => {
 
     await page.goto(url, { waitUntil: 'networkidle' });
 
-    res.json({
+    return res.json({
       success: true,
       title: await page.title(),
       url: page.url()
     });
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 });
 
@@ -78,7 +78,9 @@ router.post('/browser/close', async (req, res) => {
     const { sessionId = 'default' } = req.body;
 
     const session = activeBrowsers.get(sessionId);
-    if (!session) return res.status(404).json({ error: 'Session not found' });
+    if (!session) {
+      return res.status(404).json({ error: 'Session not found' });
+    }
 
     for (const page of session.pages.values()) {
       await page.close();
@@ -86,9 +88,9 @@ router.post('/browser/close', async (req, res) => {
     await session.browser.close();
     activeBrowsers.delete(sessionId);
 
-    res.json({ success: true, message: 'Browser closed' });
+    return res.json({ success: true, message: 'Browser closed' });
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 });
 
