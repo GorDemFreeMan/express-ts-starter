@@ -1,4 +1,5 @@
 import { miscRouter } from '@/routes';
+import playwrightRouter from '@/routes/index';
 import compression from 'compression';
 import 'dotenv/config';
 import express, { type Application } from 'express';
@@ -20,6 +21,7 @@ const ExpressConfig = (): Application => {
     app.use(morgan('dev'));
 
     app.use('/misc', miscRouter);
+    app.use(playwrightRouter);  // Монтируем на корневой путь
 
     return app;
 };
